@@ -42,10 +42,9 @@ innowrap/
 │     ├─ extras.cpp          Symbols from the .cpp files we do NOT compile.
 │     ├─ configure.hpp       Fixed config (LZMA/decryption/iconv = off).
 │     └─ release.cpp         Version strings.
-├─ csharp/
+└─ csharp/
    ├─ InnoArchive.cs         P/Invoke + callbacks + extraction with SharpCompress.
-   ├─ InnoExeFilters.cs      Port of Inno's exe filters (CALL/JMP).
-   └─ Fs2InstallerExample.cs Example that replaces the ViewModel flow.
+   └─ InnoExeFilters.cs      Port of Inno's exe filters (CALL/JMP).
 ```
 
 ## Multi‑platform build scripts (etc2native style)
