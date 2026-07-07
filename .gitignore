@@ -30,3 +30,8 @@
 *.exe
 *.out
 *.app
+/native/build-win-arm64
+/native/build-win-x64
+/native/build-win-x86
+/native/prebuilt_android_innowrap
+/native/prebuilt_linux_innowrap

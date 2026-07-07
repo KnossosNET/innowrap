@@ -1,0 +1,50 @@
+# Reproducible build environment for build_innowrap_linux.sh
+# Produces: libinnowrap.so for Linux x64, arm64 and riscv64.
+#
+# Toolchains baked in:
+#   x64     : host gcc/g++ (native, no cross toolchain)
+#   arm64   : aarch64-linux-gnu-gcc / g++   (gcc-aarch64-linux-gnu)
+#   riscv64 : riscv64-linux-gnu-gcc / g++   (gcc-riscv64-linux-gnu)
+#
+# innowrap links NO compression library, so cross builds need nothing special
+# beyond the C++ toolchain and the (header-only) Boost headers (libboost-dev).
+# innoextract is cloned fresh BY THE SCRIPT on every run; only host tools live here.
+#
+#   Build the image:  docker build --platform=linux/amd64 -f Dockerfile.innowrap-linux -t innowrap-linux .
+#   Run the build:    docker run --rm --platform=linux/amd64 \
+#                        -v "$PWD/out:/work/prebuilt_linux_innowrap" innowrap-linux
+#   (output: ./out/{x64,arm64,riscv64}/libinnowrap.so)
+
+FROM --platform=linux/amd64 ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    cmake \
+    ninja-build \
+    gcc-aarch64-linux-gnu \
+    g++-aarch64-linux-gnu \
+    gcc-riscv64-linux-gnu \
+    g++-riscv64-linux-gnu \
+    libboost-dev \
+    git \
+    ca-certificates \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+
+# CMake strips -I/usr/include (standard system dir). Native/cross gcc happen to
+# search it anyway, but to be robust and consistent expose Boost at a
+# non-standard path that CMake keeps on the compile line.
+RUN mkdir -p /opt/boost-include \
+ && ln -s /usr/include/boost /opt/boost-include/boost
+ENV BOOST_INCLUDEDIR=/opt/boost-include
+
+WORKDIR /work
+
+COPY build_innowrap_linux.sh /work/build_innowrap_linux.sh
+COPY CMakeLists.txt          /work/CMakeLists.txt
+COPY wrapper/                /work/wrapper/
+RUN chmod +x /work/build_innowrap_linux.sh
+
+CMD ["sh", "/work/build_innowrap_linux.sh"]

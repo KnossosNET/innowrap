@@ -1,0 +1,34 @@
+--- /home/claude/innoextract/src/stream/block.cpp	2026-06-18 13:26:59.648020494 +0000
++++ /home/claude/proj/inno/stream/block.cpp	2026-06-18 13:35:55.261656660 +0000
+@@ -28,7 +28,6 @@
+ #include <boost/cstdint.hpp>
+ #include <boost/iostreams/filtering_stream.hpp>
+ #include <boost/iostreams/restrict.hpp>
+-#include <boost/iostreams/filter/zlib.hpp>
+ #include <boost/iostreams/char_traits.hpp>
+ #include <boost/iostreams/concepts.hpp>
+ #include <boost/iostreams/read.hpp>
+@@ -38,6 +37,7 @@
+ #include "crypto/crc32.hpp"
+ #include "setup/version.hpp"
+ #include "stream/lzma.hpp"
++#include "innowrap_cb.hpp"
+ #include "util/endian.hpp"
+ #include "util/enum.hpp"
+ #include "util/load.hpp"
+@@ -193,13 +193,8 @@
+ 	
+ 	switch(compression) {
+ 		case Stored: break;
+-		case Zlib: fis->push(io::zlib_decompressor(), 8192); break;
+-	#if INNOEXTRACT_HAVE_LZMA
+-		case LZMA1: fis->push(inno_lzma1_decompressor(), 8192); break;
+-	#else
+-		case LZMA1: throw block_error("LZMA decompression not supported by this "
+-			                  + std::string(innoextract_name) + " build");
+-	#endif
++		case Zlib: fis->push(cs_inflate_filter(1), 8192); break;
++		case LZMA1: fis->push(cs_inflate_filter(2), 8192); break;
+ 	}
+ 	
+ 	fis->push(inno_block_filter(), 4096);

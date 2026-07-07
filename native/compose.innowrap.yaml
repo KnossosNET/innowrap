@@ -1,0 +1,29 @@
+# innowrap build images.
+#
+#   docker compose -f compose.innowrap.yaml build
+#   docker compose -f compose.innowrap.yaml run --rm innowrap-android 
+#   docker compose -f compose.innowrap.yaml run --rm innowrap-linux 
+
+services:
+
+  innowrap-android:
+    image: innowrap_android
+    build:
+      context: .
+      dockerfile: Dockerfile.innowrap-android
+    platform: linux/amd64
+    working_dir: /work
+    volumes:
+      - .:/work
+    command: ["sh", "/work/build_innowrap_android.sh"]
+
+  innowrap-linux:
+    image: innowrap_linux
+    build:
+      context: .
+      dockerfile: Dockerfile.innowrap-linux
+    platform: linux/amd64
+    working_dir: /work
+    volumes:
+      - .:/work
+    command: ["sh", "/work/build_innowrap_linux.sh"]
