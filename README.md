@@ -60,6 +60,9 @@ target:
 * **Linux (Docker):** image `Dockerfile.innowrap-linux` + `build_innowrap_linux.sh`
   → x64 (native), arm64 and riscv64 (cross). Output:
   `prebuilt_linux_innowrap/<arch>/libinnowrap.so`.
+* **macOS:** `build_innowrap_macos.sh` → Universal (arm64 + x64).
+  Requires CMake, Ninja, Boost (`brew install cmake ninja boost`). Output:
+  `prebuilt_macos_innowrap/universal/libinnowrap.dylib`.
 * **Android (Docker):** image `Dockerfile.innowrap-android` (NDK r29 baked in) +
   `build_innowrap_android.sh` → arm64‑v8a, armeabi‑v7a, x86, x86_64. Output:
   `prebuilt_android_innowrap/<abi>/libinnowrap.so`.
